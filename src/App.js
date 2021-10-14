@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+
 import CalcPage from './components/CalcPage'
 import './App.css';
 

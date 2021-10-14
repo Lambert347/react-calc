@@ -1,15 +1,21 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 function CalcPage(){
     const dispatch = useDispatch();
 
-    const [operation, setOperation] = useState('');
-    const [result, setResult] = useState(0);
-    const [value1, setValue1] = useState(0);
-    const [value2, setValue2] = useState(0);
+    useEffect(() => {
+        dispatch({type: 'GET_STRING'});
+    }, [])
 
+    const [operation, setOperation] = useState('');
+    const [result, setResult] = useState('');
+    const [value1, setValue1] = useState('');
+    const [value2, setValue2] = useState('');
+
+    const [onFirstValue, setOnFirstValue] = useState(true);
 
     const newResult = {
         operation: operation,
@@ -18,30 +24,67 @@ function CalcPage(){
         value2: value2
     }
 
-    const clearInputs = () => {
+    const onClick = (event) => {
+        console.log(onFirstValue);
+        if (onFirstValue === true) {
+            console.log('Value 1: ' , value1);
+            setValue1(value1 + event.target.value);
+        } else {
+            console.log('Value 2: ', value2);
+            setValue2(value2 + event.target.value);
+        }
+    }
+
+    const setOperator = (event) => {
+        console.log('Setting operator: ', event.target.value)
+        setOperation(event.target.value);
+        setOnFirstValue(false);
+        console.log(onFirstValue);
+    }
+
+    const clearValues = (event) => {
+        setValue1('');
+        setValue2('');
+        setOnFirstValue(true);
         setOperation('');
-        setResult(0);
-        setValue1(0);
-        setValue2(0);
     }
 
-    const addResult = (event) => {
-        dispatch({type: 'ADD_NEW_RESULT'});
-        clearInputs();
+    const submitValues = (event) => {
+        dispatch({type: 'ADD_NEW_RESULT', payload: newResult})
+        console.log(newResult);
+        clearValues();
+        console.log('CLICK!!!!!')
     }
-
     return (
         <>
-            <button>0</button>
-            <button>1</button>
-            <button>2</button>
-            <button>3</button>
-            <button>4</button>
-            <button>5</button>
-            <button>6</button>
-            <button>7</button>
-            <button>8</button>
-            <button>9</button>
+            {onFirstValue === true ?
+                <p>{value1}</p> : (
+                    <p>{value2}</p>
+                )
+        }
+            <button onClick={onClick} value={'0'}>0</button>
+            <button onClick={onClick} value={'1'}>1</button>
+            <button onClick={onClick} value={'2'}>2</button>
+            <button onClick={onClick} value={'3'}>3</button>
+            <button onClick={onClick} value={'4'}>4</button>
+            <button onClick={onClick} value={'5'}>5</button>
+            <button onClick={onClick} value={'6'}>6</button>
+            <button onClick={onClick} value={'7'}>7</button>
+            <button onClick={onClick} value={'8'}>8</button>
+            <button onClick={onClick} value={'9'}>9</button>
+            <br></br>
+            <br></br>
+            <button onClick={setOperator} value={'+'}>+</button>
+            <button onClick={setOperator} value={'-'}>-</button>
+            <button onClick={setOperator} value={'*'}>*</button>
+            <button onClick={setOperator} value={'/'}>/</button>
+            <button onClick={setOperator} value={'%'}>%</button>
+            <br></br>
+            <br></br>
+            <button onClick={clearValues}>C</button>
+            <br></br>
+            <br></br>
+            <button onClick={submitValues}>=</button>
         </>
     )
 }
