@@ -3,6 +3,18 @@ const router = express.Router();
 const pool = require('../modules/pool');
 
 //ADD GET LATER 
+router.get('/', (req, res) => {
+    const queryText = `SELECT * FROM "history" ORDER BY id LIMIT 1;`
+
+    pool.query(queryText)
+        .then(result => {
+            res.send(result.rows);
+        })
+        .catch(error => {
+            console.log('Error with getting most recent result');
+            res.sendStatus(500);
+        })
+})
 
 //POST
 router.post('/', (req, res) => {

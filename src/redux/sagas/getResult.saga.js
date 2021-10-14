@@ -6,7 +6,7 @@ function* fetchResult(){
         const response = yield axios.get('/api/result');
         console.log(response.data);
         yield put({type: 'SET_RESULT', payload: response});
-    } catch {
+    } catch(error) {
         console.log('Error with getting most recent result', error);
     }
 }
