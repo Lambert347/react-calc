@@ -1,13 +1,13 @@
 import { put, takeLatest } from "@redux-saga/core/effects";
 import axios from 'axios';
 
-function* addResult(action) {
-    try {
-        console.log('Checking in reducer')
-        yield axios.post('/api/result', action.payload);
-    } catch (error) {
-        console.log('Error with adding a result to the backend')
+const resultReducer = (state = {}, action) => {
+    switch (action.type) {
+        case 'SET_RESULT':
+            return action.payload;
+        default:
+            return state;
     }
-};
+}
 
-export default addResult;
+export default resultReducer;

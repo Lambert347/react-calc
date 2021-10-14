@@ -17,8 +17,6 @@ router.post('/', (req, res) => {
     const queryText = `INSERT INTO "history" ("operation", "result", "value1", "value2")
     VALUES ($1, $2, $3, $4);`;
 
-
-
     pool.query(queryText, [newResult.operation, newResult.result, newResult.value1, newResult.value2])
         .then(result => {
             res.sendStatus(201);
