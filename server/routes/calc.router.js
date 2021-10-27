@@ -4,11 +4,11 @@ const pool = require('../modules/pool');
 
 //ADD GET LATER 
 router.get('/', (req, res) => {
-    const queryText = `SELECT * FROM "history" ORDER BY id LIMIT 1;`
+    const queryText = `SELECT * FROM "history" ORDER BY id DESC LIMIT 1;`
 
     pool.query(queryText)
         .then(result => {
-            res.send(result.rows);
+            res.send(result.rows[0]);
         })
         .catch(error => {
             console.log('Error with getting most recent result');
@@ -19,10 +19,13 @@ router.get('/', (req, res) => {
 //POST
 router.post('/', (req, res) => {
     let newResult = req.body;
-    newResult.value1 = Number(newResult.value1);
-    newResult.value2 = Number(newResult.value2);
+    newResult.value1 = parseFloat(newResult.value1);
+    newResult.value2 = parseFloat(newResult.value2);
 
-    newResult.result = eval(newResult.value1 + newResult.operation + newResult.value2);
+    newResult.result = parseFloat(eval(newResult.value1 + newResult.operation + newResult.value2));
+
+
+
 
     console.log('New Result going to database history:', newResult);
 
@@ -34,6 +37,20 @@ router.post('/', (req, res) => {
             res.sendStatus(201);
         }).catch(error => {
             console.log('Error with adding a new result to the calculator history', error)
+            res.sendStatus(500);
+        })
+})
+
+//DELETE
+router.delete('/:id', (req, res) => {
+    console.log('Deleting result with id: ' , req.params.id);
+    const queryText = `DELETE FROM "history" WHERE history.id = $1`;
+    pool.query(queryText, [req.params.id])
+        .then((result) => {
+            res.sendStatus(200);
+        })
+        .catch((error) => {
+            console.log('Error with deleting result: ', error);
             res.sendStatus(500);
         })
 })

@@ -9,6 +9,14 @@ import createSagaMiddleware from '@redux-saga/core';
 import { applyMiddleware, createStore } from 'redux';
 import { Provider } from 'react-redux';
 
+
+import {
+  HashRouter as Router,
+  Route,
+  Redirect,
+  Switch,
+} from 'react-router-dom';
+
 const sagaMiddleWare = createSagaMiddleware();
 
 const store = createStore(
@@ -21,7 +29,9 @@ sagaMiddleWare.run(rootSaga);
 
 ReactDOM.render(
  <Provider store={store}>
-   <App />
+   <Router>
+    <App />
+   </Router>
  </Provider>,
   document.getElementById('root')
 );

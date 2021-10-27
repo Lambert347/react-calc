@@ -5,7 +5,7 @@ function* resultSaga(action){
     try {
         console.log(action.payload);
         yield axios.post('/api/result/', action.payload);
-        yield put({type: 'GET_RESULTS'});
+        yield put({type: 'FETCH_RESULT'});
     } catch(error) {
         console.log('Error with adding a result', error)
     }

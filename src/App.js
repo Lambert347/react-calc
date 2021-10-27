@@ -1,14 +1,23 @@
 
 import CalcPage from './components/CalcPage'
-import './App.css';
+import ResultsPage from './components/ResultsPage'
+import {
+  HashRouter as Router,
+  Route,
+  Redirect,
+  Switch,
+} from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <CalcPage />
-      </header>
-    </div>
+    <Router>
+          <Route exact path="/">
+            <CalcPage />
+          </Route>
+          <Route exact path="/results">
+            <ResultsPage />
+          </Route> 
+    </Router>
   );
 }
 

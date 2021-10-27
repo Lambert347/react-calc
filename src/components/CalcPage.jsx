@@ -2,20 +2,22 @@ import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 function CalcPage(){
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch({type: 'GET_STRING'});
-    }, [])
+    const history = useHistory();
 
     const [operation, setOperation] = useState('');
     const [result, setResult] = useState('');
     const [value1, setValue1] = useState('');
     const [value2, setValue2] = useState('');
 
+
     const [onFirstValue, setOnFirstValue] = useState(true);
+    let [gotResult, setGotResult] = useState(false);
+    
+    const recentResult = useSelector(store => store.result);
 
     const newResult = {
         operation: operation,
@@ -26,20 +28,35 @@ function CalcPage(){
 
     const onClick = (event) => {
         console.log(onFirstValue);
-        if (onFirstValue === true) {
-            console.log('Value 1: ' , value1);
-            setValue1(value1 + event.target.value);
+        console.log(recentResult.result);
+
+        console.log('Checking got result when submitting: ', gotResult);
+        if (gotResult === true) {
+            setValue1(recentResult.result);
+            console.log('Updating value 1 to the recent result: ', value1);
+            if (onFirstValue === true) {
+                console.log('Value 1: ' , recentResult.result);
+                setValue1(recentResult.result + event.target.value);
+            } else {
+                console.log('Value 2: ', value2);
+                setValue2(value2 + event.target.value);
+            }
         } else {
-            console.log('Value 2: ', value2);
-            setValue2(value2 + event.target.value);
+            if (onFirstValue === true) {
+                console.log('Value 1: ' , value1);
+                setValue1(value1 + event.target.value);
+            } else {
+                console.log('Value 2: ', value2);
+                setValue2(value2 + event.target.value);
+            }
         }
+        
     }
 
     const setOperator = (event) => {
         console.log('Setting operator: ', event.target.value)
         setOperation(event.target.value);
         setOnFirstValue(false);
-        console.log(onFirstValue);
     }
 
     const clearValues = (event) => {
@@ -49,19 +66,38 @@ function CalcPage(){
         setOperation('');
     }
 
-    const submitValues = (event) => {
-        dispatch({type: 'ADD_NEW_RESULT', payload: newResult})
+    const resetCalc = () => {
+        window.location.reload(false);
+    }
+
+    const submitValues = () => {
+        dispatch({type: 'ADD_NEW_RESULT', payload: newResult});
         console.log(newResult);
+        setGotResult(true);
+        gotResult = true;
+        
         clearValues();
-        console.log('CLICK!!!!!')
+
+        console.log('Checking recent result: ', recentResult);
+
+        setOnFirstValue(true);
+        console.log('Checking got result: ', gotResult)
+    }
+
+    const getAll = (event) => {
+        history.push('/results');
     }
     return (
         <>
-            {onFirstValue === true ?
-                <p>{value1}</p> : (
-                    <p>{value2}</p>
-                )
-        }
+        
+            {recentResult.result ? 
+                <p>{recentResult.result}</p> : 
+
+                onFirstValue === true ?
+                    <p>{value1}</p> :
+                        <p>{value2}</p>
+                
+            }
             <button onClick={onClick} value={'0'}>0</button>
             <button onClick={onClick} value={'1'}>1</button>
             <button onClick={onClick} value={'2'}>2</button>
@@ -81,13 +117,17 @@ function CalcPage(){
             <button onClick={setOperator} value={'%'}>%</button>
             <br></br>
             <br></br>
-            <button onClick={clearValues}>C</button>
+            <button onClick={resetCalc}>C</button>
             <br></br>
             <br></br>
             <button onClick={submitValues}>=</button>
+
+
+            <button onClick={getAll}>History</button>
         </>
     )
 }
+
 
 
 export default CalcPage;
